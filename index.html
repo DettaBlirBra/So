@@ -1,0 +1,730 @@
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geografiquiz</title>
+
+<style>
+:root {
+    --primary: #5267e8;
+    --dark: #27346f;
+    --bg: #f1f4fb;
+    --green: #16a36a;
+    --red: #dc4655;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,#e6eaff,#f5f7fc);
+    font-family: Arial, sans-serif;
+    color: #202942;
+}
+
+.container {
+    width: 100%;
+    max-width: 620px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.logo { font-size: 45px; }
+
+h1 {
+    margin: 5px 0;
+    font-size: 30px;
+}
+
+.subtitle {
+    color: #778198;
+    font-size: 14px;
+}
+
+.card {
+    background: white;
+    padding: 28px;
+    border-radius: 22px;
+    box-shadow: 0 15px 45px #29365d16;
+}
+
+.section-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #8490a5;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.tab {
+    padding: 14px 8px;
+    border-radius: 12px;
+    border: 1px solid #e0e5ef;
+    background: #f8f9fc;
+    color: #667085;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.mode-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.mode-btn {
+    padding: 13px 8px;
+    border: 2px solid #e3e7f0;
+    border-radius: 12px;
+    background: white;
+    color: #64708a;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.mode-btn.active {
+    border-color: var(--primary);
+    background: #f0f2ff;
+    color: var(--primary);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    text-align: center;
+    padding: 14px;
+    background: #f7f8fc;
+    border-radius: 12px;
+}
+
+.stat span {
+    display: block;
+    font-size: 12px;
+    color: #8992a5;
+    margin-bottom: 6px;
+}
+
+.stat strong { font-size: 22px; }
+
+.progress {
+    height: 8px;
+    background: #e9edf5;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg,#5267e8,#8c9bff);
+    transition: width .3s;
+}
+
+.question-box {
+    background: #f0f2ff;
+    padding: 30px 15px;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.question-label {
+    font-size: 13px;
+    color: #7883a5;
+    margin-bottom: 12px;
+}
+
+.question {
+    font-size: clamp(25px,5vw,36px);
+    font-weight: 800;
+    color: #3949a9;
+    overflow-wrap: anywhere;
+}
+
+input {
+    width: 100%;
+    padding: 17px;
+    border: 2px solid #e0e5ef;
+    border-radius: 12px;
+    font-size: 17px;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--primary);
+}
+
+input.correct {
+    border-color: var(--green);
+    background: #e9f9f0;
+}
+
+input.wrong {
+    border-color: var(--red);
+    background: #fff0f0;
+}
+
+.feedback {
+    display: none;
+    padding: 15px;
+    margin-top: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.feedback.correct {
+    display: block;
+    color: #087747;
+    background: #e5f8ef;
+}
+
+.feedback.wrong {
+    display: block;
+    color: #b42332;
+    background: #fff0f0;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action {
+    flex: 1;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.primary {
+    color: white;
+    background: var(--primary);
+}
+
+.primary:hover { background: #4052ca; }
+
+.secondary {
+    color: #526078;
+    background: #edf0f6;
+}
+
+.action:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.result {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.result-icon { font-size: 65px; }
+
+.result h2 { font-size: 28px; }
+
+.result-score {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--primary);
+    margin: 20px;
+}
+
+.result-text {
+    color: #778198;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #8b95a8;
+}
+
+@media(max-width:450px) {
+    body { padding: 12px; }
+    .card { padding: 20px 16px; }
+    .buttons { flex-direction: column; }
+    h1 { font-size: 25px; }
+    .mode-btn { font-size: 12px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <div class="logo">🌎</div>
+    <h1>Geografiquiz</h1>
+    <div class="subtitle">Hur bra kan du länder och huvudstäder?</div>
+</header>
+
+<div class="card">
+
+<div id="game">
+
+    <div class="section-title">Välj världsdel</div>
+
+    <div class="tabs">
+        <button class="tab active" id="northTab"
+            onclick="changeContinent('north')">
+            🌎 Nordamerika (14)
+        </button>
+
+        <button class="tab" id="southTab"
+            onclick="changeContinent('south')">
+            🌎 Sydamerika (13)
+        </button>
+    </div>
+
+    <div class="section-title">Vad vill du träna på?</div>
+
+    <div class="mode-buttons">
+        <button class="mode-btn active" id="countryMode"
+            onclick="changeMode('country')">
+            🗺️ Land → Huvudstad
+        </button>
+
+        <button class="mode-btn" id="capitalMode"
+            onclick="changeMode('capital')">
+            🏙️ Huvudstad → Land
+        </button>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <span>Fråga</span>
+            <strong id="questionCount">1 / 14</strong>
+        </div>
+
+        <div class="stat">
+            <span>Poäng</span>
+            <strong id="score">0</strong>
+        </div>
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="question-box">
+        <div class="question-label" id="questionLabel">
+            Vilken är huvudstaden i?
+        </div>
+        <div class="question" id="question">Kanada</div>
+    </div>
+
+    <form id="answerForm">
+        <input id="answerInput"
+            type="text"
+            placeholder="Skriv ditt svar..."
+            autocomplete="off"
+            required>
+
+        <div class="feedback" id="feedback"
+            aria-live="polite"></div>
+
+        <div class="buttons">
+            <button class="action primary" id="checkButton"
+                type="submit">
+                ✓ Rätta svar
+            </button>
+
+            <button class="action secondary" id="nextButton"
+                type="button" onclick="nextQuestion()" disabled>
+                Nästa fråga →
+            </button>
+        </div>
+    </form>
+
+</div>
+
+<div class="result" id="result">
+    <div class="result-icon" id="resultIcon">🏆</div>
+    <h2 id="resultTitle">Bra jobbat!</h2>
+    <div class="result-score" id="finalScore">0 / 14</div>
+    <div class="result-text" id="resultText"></div>
+
+    <button class="action primary" style="width:100%"
+        onclick="restartGame()">
+        ↻ Spela igen
+    </button>
+</div>
+
+</div>
+
+<footer>🌍 27 frågor · 2 världsdelar · 2 spellägen</footer>
+
+</div>
+
+<script>
+
+// ========================================
+// LÄNDER OCH HUVUDSTÄDER
+// ========================================
+
+const data = {
+
+north: [
+    {country:"Belize", capital:"Belmopan"},
+    {country:"Costa Rica", capital:"San José"},
+    {country:"Dominikanska Republiken", capital:"Santo Domingo"},
+    {country:"El Salvador", capital:"San Salvador"},
+    {country:"Guatemala", capital:"Guatemala City"},
+    {country:"Haiti", capital:"Port-au-Prince"},
+    {country:"Honduras", capital:"Tegucigalpa"},
+    {country:"Jamaica", capital:"Kingston"},
+    {country:"Kanada", capital:"Ottawa"},
+    {country:"Kuba", capital:"Havanna"},
+    {country:"Mexico", capital:"Mexico City"},
+    {country:"Nicaragua", capital:"Managua"},
+    {country:"Panama", capital:"Panama City"},
+    {country:"USA", capital:"Washington, D.C."}
+],
+
+south: [
+    {country:"Argentina", capital:"Buenos Aires"},
+    {country:"Bolivia", capital:"Sucre"},
+    {country:"Brasilien", capital:"Brasília"},
+    {country:"Chile", capital:"Santiago"},
+    {country:"Colombia", capital:"Bogotá"},
+    {country:"Ecuador", capital:"Quito"},
+    {country:"Franska Guyana", capital:"Cayenne"},
+    {country:"Guyana", capital:"Georgetown"},
+    {country:"Paraguay", capital:"Asunción"},
+    {country:"Peru", capital:"Lima"},
+    {country:"Surinam", capital:"Paramaribo"},
+    {country:"Uruguay", capital:"Montevideo"},
+    {country:"Venezuela", capital:"Caracas"}
+]
+
+};
+
+// ========================================
+// SPELETS VARIABLER
+// ========================================
+
+let continent = "north";
+let mode = "country";
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+
+// ========================================
+// BLANDA FRÅGOR
+// ========================================
+
+function shuffle(array) {
+    let result = [...array];
+
+    for (let i = result.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+
+    return result;
+}
+
+// ========================================
+// NORMALISERA SVAR
+// ========================================
+
+function normalize(value) {
+    return value.trim()
+        .toLocaleLowerCase("sv-SE")
+        .normalize("NFC")
+        .replace(/\s+/g, " ");
+}
+
+// ========================================
+// STARTA SPELET
+// ========================================
+
+function startGame() {
+    questions = shuffle(data[continent]);
+    currentIndex = 0;
+    score = 0;
+
+    document.getElementById("game").style.display = "block";
+    document.getElementById("result").style.display = "none";
+
+    showQuestion();
+}
+
+// ========================================
+// VISA FRÅGA
+// ========================================
+
+function showQuestion() {
+
+    if (currentIndex >= questions.length) {
+        finishGame();
+        return;
+    }
+
+    answered = false;
+
+    let item = questions[currentIndex];
+
+    document.getElementById("question").textContent =
+        mode === "country" ? item.country : item.capital;
+
+    document.getElementById("questionLabel").textContent =
+        mode === "country"
+        ? "Vilken är huvudstaden i?"
+        : "Vilket land har denna huvudstad?";
+
+    document.getElementById("questionCount").textContent =
+        `${currentIndex + 1} / ${questions.length}`;
+
+    document.getElementById("score").textContent = score;
+
+    document.getElementById("progressBar").style.width =
+        (currentIndex / questions.length * 100) + "%";
+
+    let input = document.getElementById("answerInput");
+
+    input.value = "";
+    input.disabled = false;
+    input.className = "";
+
+    let feedback = document.getElementById("feedback");
+    feedback.className = "feedback";
+    feedback.textContent = "";
+
+    document.getElementById("checkButton").disabled = false;
+    document.getElementById("nextButton").disabled = true;
+
+    input.focus();
+}
+
+// ========================================
+// BYT VÄRLDSDEL
+// ========================================
+
+function changeContinent(value) {
+    continent = value;
+
+    document.getElementById("northTab")
+        .classList.toggle("active", value === "north");
+
+    document.getElementById("southTab")
+        .classList.toggle("active", value === "south");
+
+    startGame();
+}
+
+// ========================================
+// BYT SPELLÄGE
+// ========================================
+
+function changeMode(value) {
+
+    mode = value;
+
+    document.getElementById("countryMode")
+        .classList.toggle("active", value === "country");
+
+    document.getElementById("capitalMode")
+        .classList.toggle("active", value === "capital");
+
+    // Samma fråga och poäng behålls.
+    showQuestion();
+}
+
+// ========================================
+// RÄTTA SVAR
+// ========================================
+
+document.getElementById("answerForm")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    if (answered) {
+        nextQuestion();
+        return;
+    }
+
+    let input = document.getElementById("answerInput");
+    let answer = normalize(input.value);
+
+    if (!answer) {
+        input.focus();
+        return;
+    }
+
+    let item = questions[currentIndex];
+
+    let correctAnswer = mode === "country"
+        ? item.capital
+        : item.country;
+
+    let correct = answer === normalize(correctAnswer);
+
+    answered = true;
+    input.disabled = true;
+
+    let feedback = document.getElementById("feedback");
+
+    if (correct) {
+
+        score++;
+
+        input.classList.add("correct");
+
+        feedback.className = "feedback correct";
+        feedback.innerHTML = "✓ <strong>Rätt svar!</strong><br>Mycket bra!";
+
+    } else {
+
+        input.classList.add("wrong");
+
+        feedback.className = "feedback wrong";
+        feedback.innerHTML =
+            "✗ <strong>Fel svar!</strong><br>Rätt svar är: <strong>" +
+            escapeHTML(correctAnswer) + "</strong>";
+    }
+
+    document.getElementById("score").textContent = score;
+    document.getElementById("checkButton").disabled = true;
+    document.getElementById("nextButton").disabled = false;
+
+    document.getElementById("nextButton").textContent =
+        currentIndex === questions.length - 1
+        ? "Visa resultat →"
+        : "Nästa fråga →";
+
+    document.getElementById("nextButton").focus();
+});
+
+// ========================================
+// SÄKER TEXT
+// ========================================
+
+function escapeHTML(value) {
+    return value.replace(/[&<>"']/g, char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+    })[char]);
+}
+
+// ========================================
+// NÄSTA FRÅGA
+// ========================================
+
+function nextQuestion() {
+    if (!answered) return;
+
+    currentIndex++;
+    showQuestion();
+}
+
+// ========================================
+// RESULTAT
+// ========================================
+
+function finishGame() {
+
+    document.getElementById("game").style.display = "none";
+    document.getElementById("result").style.display = "block";
+
+    let total = questions.length;
+    let percentage = Math.round(score / total * 100);
+
+    document.getElementById("finalScore").textContent =
+        `${score} / ${total}`;
+
+    let icon, title, message;
+
+    if (percentage === 100) {
+        icon = "🏆";
+        title = "Fantastiskt!";
+        message = "Full pott! Du är en geografimästare!";
+    } else if (percentage >= 80) {
+        icon = "🌟";
+        title = "Riktigt bra!";
+        message = "Du kan verkligen dina länder och huvudstäder!";
+    } else if (percentage >= 50) {
+        icon = "👏";
+        title = "Bra jobbat!";
+        message = "Du har många rätt. Fortsätt öva!";
+    } else {
+        icon = "🌱";
+        title = "Bra försök!";
+        message = "Öva lite till och försök igen!";
+    }
+
+    document.getElementById("resultIcon").textContent = icon;
+    document.getElementById("resultTitle").textContent = title;
+
+    document.getElementById("resultText").textContent =
+        message + " Du fick " + percentage +
+        "% rätt i " +
+        (continent === "north" ? "Nordamerika." : "Sydamerika.");
+
+    document.getElementById("progressBar").style.width = "100%";
+}
+
+// ========================================
+// SPELA IGEN
+// ========================================
+
+function restartGame() {
+    startGame();
+}
+
+// ========================================
+// START
+// ========================================
+
+startGame();
+
+</script>
+</body>
+</html>
